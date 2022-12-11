@@ -74,3 +74,66 @@ current_values = plt.gca().get_yticks()
 plt.gca().set_yticklabels(['$' + '{:,.0f}'.format(x) for x in current_values])
 
 plt.show()
+
+
+# 데이터 불러오기
+salesData = load_data('A회사_보습제_매출데이터_v1_edited.csv')
+salesData
+
+# 데이터 전처리
+salesData = refined_data(salesData)
+salesData
+
+# 판매 갯수 구하기
+salesVolumes = []
+for x, y in zip(list(salesData['총매출']), list(salesData['병당 가격'])):
+    salesVolumes.append(x // y)
+    
+salesVolumes
+
+# 순이익 구하기
+netProfit = []
+for x, y in zip(list(salesData['이익']), salesVolumes):
+    netProfit.append(x * y)
+    
+netProfit
+
+# 판매량과 순이익 그래프 그리기
+months = list(salesData.index)
+
+plt.style.use('default')
+plt.rcParams['font.size'] = 12
+
+fig, ax1 = plt.subplots()
+ax1.plot(months, salesVolumes, color='green')
+ax1.set_ylabel('salesVolumes(green)')
+ax1.grid(True, axis = 'y')
+
+current_values = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+
+ax2 = ax1.twinx()
+ax2.set_ylabel('netProfit(pink)')
+ax2.plot(months, netProfit, color='deeppink')
+
+current_values = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['$' + '{:,.0f}'.format(x) for x in current_values])
+
+plt.show()
+
+# 제조원가에 따른 총 순이익 변화
+import numpy as np
+
+x = np.arange(3, 6, 0.5)
+y = (7.60 - 1.28 - x) * salesVolumes[-1]
+
+plt.plot(x, y)
+plt.ylim(2000000, 10000000)
+current_values = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['$' + '{:,.0f}'.format(x) for x in current_values])
+
+plt.grid(True)
+plt.axvline(5.12, 0, 1, color = 'red', linestyle = '--')
+plt.axhline((7.60 - 1.28 - 5.12) * salesVolumes[-1], 0, 1, color = 'red', linestyle = '--')
+
+plt.show()
