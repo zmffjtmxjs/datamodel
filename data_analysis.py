@@ -1,33 +1,46 @@
-import pandas as pd
+# 데이터 불러오기
+def load_data(file_path):
+    import pandas as pd
+    
+    data = pd.read_csv(file_path, encoding = 'cp949')
 
-#데이터 불러오기
-filePath = 'A회사_보습제_매출데이터_v1.csv'
+    data = data.transpose()
+    data.rename(columns = data.iloc[0], inplace = True)
+    data = data.drop(data.index[0])
 
-salesData = pd.read_csv(filePath, encoding = 'cp949')
+    return data
 
-salesData = salesData.transpose()
-salesData.rename(columns = salesData.iloc[0], inplace = True)
-salesData = salesData.drop(salesData.index[0])
+# 특수문자 제거하기
+def refined_data(df):
+    import re
+    
+    for col in list(df.columns):
+        refineded = []
+        for x in list(df[col]):
+            try:
+                refineded.append(int(re.sub(r"[^0-9.%:]", "", x)))
+            except:
+                try:
+                    refineded.append(float(re.sub(r"[^0-9.%:]", "", x)))
+                except:
+                    refineded.append(str(re.sub(r"[^0-9.%:]", "", x)))
+        df[col] = refineded
+    
+    return df
 
+#=============================================================================================
+
+# 데이터 불러오기
+salesData = load_data('A회사_보습제_매출데이터_v1.csv')
 salesData
 
-import re
-
-# 특수기호 제거
-for col in list(salesData.columns):
-    refineded = []
-    for x in list(salesData[col]):
-        try:
-            refineded.append(int(re.sub(r"[^0-9.]", "", x)))
-        except:
-            refineded.append(float(re.sub(r"[^0-9.]", "", x)))
-    salesData[col] = refineded
-    
+# 데이터 전처리
+salesData = refined_data(salesData)
 salesData
 
 import matplotlib.pyplot as plt
 
-# 이전 과제 
+# 이전 과제에서 작성한 그래프를 파이썬으로 구현
 
 totalSales = list(salesData['총매출'])
 unitPrices = list(salesData['1온스별단가'])
