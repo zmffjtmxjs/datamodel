@@ -98,6 +98,27 @@ for x, y in zip(list(salesData['이익']), salesVolumes):
     
 netProfit
 
+# 소셜네트워크비용과 총매출의 상관관계 분석
+adv = []
+socal = []
+for i in salesData['광고:소셜네트워크 비율'].tolist():
+    i = i.split(':')
+    adv.append(int(i[0]) * 128 / 1000)
+    socal.append(int(i[1]) * 128 / 1000)
+
+import pandas as pd
+
+data = {'총매출' : salesData['총매출'].tolist(),
+        '광고비용' : adv,
+        '소셜네트워크비용' : socal
+       }
+
+import statsmodels.api as sm
+
+lin_reg = sm.OLS.from_formula("총매출 ~ 소셜네트워크비용", pd.DataFrame(data)).fit()
+lin_reg.summary()
+
+
 # 판매량과 순이익 그래프 그리기
 months = list(salesData.index)
 
