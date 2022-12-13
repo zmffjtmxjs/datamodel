@@ -124,7 +124,7 @@ plt.show()
 # 제조원가에 따른 총 순이익 변화
 import numpy as np
 
-x = np.arange(3, 6, 0.5)
+x = np.arange(3, 6, 0.01)
 y = (7.60 - 1.28 - x) * salesVolumes[-1]
 
 plt.plot(x, y)
@@ -134,6 +134,12 @@ plt.gca().set_yticklabels(['$' + '{:,.0f}'.format(x) for x in current_values])
 
 plt.grid(True)
 plt.axvline(5.12, 0, 1, color = 'red', linestyle = '--')
-plt.axhline((7.60 - 1.28 - 5.12) * salesVolumes[-1], 0, 1, color = 'red', linestyle = '--')
+
+for idx in reversed(range(len(x))):
+    if y[idx] > 6476000:
+        recommandCost = x[idx]
+        break
+
+plt.axvline(recommandCost, 0, 1, color = 'green', linestyle = '--')
 
 plt.show()
